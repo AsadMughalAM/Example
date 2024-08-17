@@ -43,44 +43,33 @@ namespace DAL.Repositories
 
             return cat;
         }
-        public Category? GetById(string id)
-        {
-            string commandString = $"Select * FROM Customers where CustomerID = '{id}' ;";
-
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(commandString, connection);
-
-            var dataAdapter = new SqlDataAdapter(command);
-            var dataTable = new DataTable();
-            dataAdapter.Fill(dataTable);
-
-            var customer = new List<Customer>();
-            if (dataTable.Rows.Count > 0)
-            {
-                var row = dataTable.Rows[0];
-                var cust = new Customer()
-                {
-                    CustomerID = (string)row["CustomerID"],
-                    CompanyName = (string)row["CompanyName"],
-                    ContactName = row["ContactName"]?.ToString(),
-                    ContactTitle = row["ContactTitle"]?.ToString(),
-                    Address = row["Address"]?.ToString(),
-                    City = row["City"]?.ToString(),
-                    Region = row["Region"]?.ToString(),
-                    PostalCode = row["PostalCode"]?.ToString(),
-                    Country = row["Country"]?.ToString(),
-                    Phone = row["Phone"]?.ToString(),
-                    Fax = row["Fax"]?.ToString(),
-
-                };
-            }
-            return null;
-        }
+       
         public Category Create(Category category)
         {
 
 
             string commandString = $"Insert into Categories ([CategoryName],[Description]) values ( '{category.CategoryName}' , '{category.Description}')";
+            Console.WriteLine(commandString);
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(commandString, connection);
+
+            if (connection.State == ConnectionState.Closed)
+            {
+                connection.Open();
+            }
+            var a = command.ExecuteNonQuery();
+            if (connection.State == ConnectionState.Open)
+            {
+                connection.Close();
+            }
+
+            return a > 0 ? category : new();
+        }
+        public Category Update(Category category)
+        {
+
+
+            string commandString = $"Update Categories Set ([CategoryName]='{category.CategoryName}',[Description]='{category.Description}') Where ( [CategoryID]='{category.CategoryID}')";
             Console.WriteLine(commandString);
             var connection = new SqlConnection(_connectionString);
             var command = new SqlCommand(commandString, connection);

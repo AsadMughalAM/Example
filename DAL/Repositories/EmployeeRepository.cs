@@ -56,50 +56,50 @@ namespace DAL.Repositories
             return employees;
         }
 
-        public Employee? GetById(string id)
-        {
-            string commandString = $"Select * FROM Employees where employeeID = '{id}' ;";
+        //public Employee? GetById(string id)
+        //{
+        //    string commandString = $"Select * FROM Employees where employeeID = '{id}' ;";
 
-            var connection = new SqlConnection(_connectionString);
-            var command = new SqlCommand(commandString, connection);
+        //    var connection = new SqlConnection(_connectionString);
+        //    var command = new SqlCommand(commandString, connection);
 
-            var dataAdapter = new SqlDataAdapter(command);
-            var dataTable = new DataTable();
-            dataAdapter.Fill(dataTable);
+        //    var dataAdapter = new SqlDataAdapter(command);
+        //    var dataTable = new DataTable();
+        //    dataAdapter.Fill(dataTable);
 
-            var employees = new List<Employee>();
-            if (dataTable.Rows.Count > 0)
-            {
-                var row = dataTable.Rows[0];
-                var employee = new Employee()
-                {
-                    EmployeeID = (int)row["EmployeeID"],
-                    LastName = (string)row["LastName"],
-                    FirstName = (string)row["FirstName"],
-                    Title = row["Title"]?.ToString(),
-                    TitleOfCourtesy = row["TitleOfCourtesy"]?.ToString(),
-                    BirthDate = (row["BirthDate"] as DateTime?),
+        //    var employees = new List<Employee>();
+        //    if (dataTable.Rows.Count > 0)
+        //    {
+        //        var row = dataTable.Rows[0];
+        //        var employee = new Employee()
+        //        {
+        //            EmployeeID = (int)row["EmployeeID"],
+        //            LastName = (string)row["LastName"],
+        //            FirstName = (string)row["FirstName"],
+        //            Title = row["Title"]?.ToString(),
+        //            TitleOfCourtesy = row["TitleOfCourtesy"]?.ToString(),
+        //            BirthDate = (row["BirthDate"] as DateTime?),
 
-                    HireDate = (row["HireDate"] as DateTime?),
-                    Address = row["Address"]?.ToString(),
-                    City = row["City"]?.ToString(),
-                    Region = row["Region"]?.ToString(),
-                    PostalCode = row["PostalCode"]?.ToString(),
-                    Country = row["Country"]?.ToString(),
-                    HomePhone = row["HomePhone"]?.ToString(),
-                    Extension = row["Extension"]?.ToString(),
-                    ReportsTo = (row["ReportsTo"] as int?),
-                    PhotoPath = row["PhotoPath"]?.ToString(),
+        //            HireDate = (row["HireDate"] as DateTime?),
+        //            Address = row["Address"]?.ToString(),
+        //            City = row["City"]?.ToString(),
+        //            Region = row["Region"]?.ToString(),
+        //            PostalCode = row["PostalCode"]?.ToString(),
+        //            Country = row["Country"]?.ToString(),
+        //            HomePhone = row["HomePhone"]?.ToString(),
+        //            Extension = row["Extension"]?.ToString(),
+        //            ReportsTo = (row["ReportsTo"] as int?),
+        //            PhotoPath = row["PhotoPath"]?.ToString(),
 
-                };
-                if (employee.ReportsTo is not null)
-                {
-                    employee.ReportsToEmployee = this.GetById(employee.ReportsTo.ToString());
-                }
-                return employee;
-            }
-            return null;
-        }
+        //        };
+        //        if (employee.ReportsTo is not null)
+        //        {
+        //            employee.ReportsToEmployee = this.GetById(employee.ReportsTo.ToString());
+        //        }
+        //        return employee;
+        //    }
+        //    return null;
+        //}
 
         public Employee Create(Employee employee)
         {
@@ -122,5 +122,27 @@ namespace DAL.Repositories
             
             return a > 0 ? employee : new();
         }
+        public Employee Update(Employee employee)
+        {
+
+
+            string commandString = $"Update Employees Set ([LastName]='{employee.LastName}',[FirstName]='{employee.FirstName}',[Title]='{employee.Title}',[BirthDate]='{employee.BirthDate.Value.ToString("yyyy-MMM-dd")}') Where ([EmployeeID] ='{employee.EmployeeID}'')";
+            Console.WriteLine(commandString);
+            var connection = new SqlConnection(_connectionString);
+            var command = new SqlCommand(commandString, connection);
+
+            if (connection.State == ConnectionState.Closed)
+            {
+                connection.Open();
+            }
+            var a = command.ExecuteNonQuery();
+            if (connection.State == ConnectionState.Open)
+            {
+                connection.Close();
+            }
+            
+            return a > 0 ? employee : new();
+        } 
+
     }
 }

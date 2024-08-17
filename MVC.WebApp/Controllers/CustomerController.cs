@@ -24,23 +24,30 @@ namespace MVC.WebApp.Controllers
         }
 
 
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult GetById(string id)
-        {
-            var customer = _repository.GetById(id);
-            if (customer is not null)
-            {
-                return Ok(customer);
-            }
-            return NotFound();
-        }
 
         [HttpPost]
         public IActionResult Create([FromBody] CustomerUpsertDto CustomerDto)
         {
             var customer = new Customer
             {
+                CompanyName = CustomerDto.CompanyName,
+                Country = CustomerDto.Country,
+            };
+
+            var resultcustomer = _repository.Create(customer);
+
+            if (resultcustomer is not null)
+            {
+                return Created($"baseurl", resultcustomer.CustomerID);
+            }
+            return BadRequest();
+        }
+        [HttpPut]
+        public IActionResult Update([FromBody] CustomerUpsertDto CustomerDto)
+        {
+            var customer = new Customer
+            {
+                CustomerID=CustomerDto.CustomerID,
                 CompanyName = CustomerDto.CompanyName,
                 Country = CustomerDto.Country,
             };

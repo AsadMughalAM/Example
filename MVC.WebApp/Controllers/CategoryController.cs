@@ -24,23 +24,30 @@ namespace MVC.WebApp.Controllers
         }
 
 
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult GetById(string id)
-        {
-            var category = _repository.GetById(id);
-            if (category is not null)
-            {
-                return Ok(category);
-            }
-            return NotFound();
-        }
 
         [HttpPost]
         public IActionResult Create([FromBody] CategoryUpsertDto CategoryDto)
         {
             var category = new Category
             {
+                CategoryName = CategoryDto.CategoryName,
+                Description = CategoryDto.Description,
+            };
+
+            var resultcategory = _repository.Create(category);
+
+            if (resultcategory is not null)
+            {
+                return Created($"baseurl", resultcategory.CategoryID);
+            }
+            return BadRequest();
+        }
+        [HttpPut]
+        public IActionResult Update([FromBody] CategoryUpsertDto CategoryDto)
+        {
+            var category = new Category
+            {
+                CategoryID=CategoryDto.CategoryID,
                 CategoryName = CategoryDto.CategoryName,
                 Description = CategoryDto.Description,
             };

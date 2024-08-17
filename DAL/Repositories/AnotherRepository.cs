@@ -14,7 +14,7 @@ namespace DAL.Repositories
 
         public string GetConnectionString()
         {
-            return _config.GetConnectionString("NorthWindDb")!.ToString();
+            return _config.GetConnectionString("NorthWind")!.ToString();
         }
     }
 }

@@ -27,17 +27,17 @@ namespace MVC.WebApp.Controllers
         }
 
 
-        [HttpGet]
-        [Route("{id}")]
-        public IActionResult GetById(string id)
-        {
-            var employee = _repository.GetById(id);
-            if (employee is not null)
-            {
-                return Ok(employee);
-            }
-            return NotFound();
-        }
+        //[HttpGet]
+        //[Route("{id}")]
+        //public IActionResult GetById(string id)
+        //{
+        //    var employee = _repository.GetById(id);
+        //    if (employee is not null)
+        //    {
+        //        return Ok(employee);
+        //    }
+        //    return NotFound();
+        //}
 
         [HttpPost]
         public IActionResult Create([FromBody]EmployeeUpsertDto employeedto)
@@ -58,6 +58,27 @@ namespace MVC.WebApp.Controllers
             }
             return BadRequest();
         }
+        [HttpPut]
+        public IActionResult Update([FromBody]EmployeeUpsertDto employeedto)
+        {
+            var employee = new Employee
+            {
+                EmployeeID=employeedto.EmployeeID,
+                FirstName = employeedto.FirstName,
+                LastName = employeedto.LastName,
+                BirthDate = DateTime.Parse(employeedto.BirthDate),
+                Title = employeedto.Title,
+            };
+
+            var resultemployee = _repository.Create(employee);
+
+            if (resultemployee is not null)
+            {
+                return Created($"baseurl", resultemployee.EmployeeID);
+            }
+            return BadRequest();
+        }
+     
 
     }
 }
